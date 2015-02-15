@@ -14,8 +14,8 @@ func TestRoomsShouldDescribeThemselves(t *testing.T) {
 			},
 		}}
 
-	if r.Description(g) != "You are in a maze of twisty little passages, all alike" {
-		t.Fatal("expected the description of r to be `You are in a maze of twisty little passages, all alike`")
+	if r.Description(g) != "You are in a maze of twisty little passages, all alike\n\n" {
+		t.Fatal("expected the description of r to be `You are in a maze of twisty little passages, all alike\n\n`")
 	}
 }
 
@@ -29,7 +29,7 @@ func TestRoomsShouldDescribeThemselvesWithMultipleStanzas(t *testing.T) {
 		},
 	}
 
-	if r.Description(g) != "foo bar baz quux\n\nxyzzy" {
-		t.Fatalf("expected description of testRoom with two stanzas to be `foo bar baz quux\\n\\nxyzzy`, got %q", r.Description(g))
+	if r.Description(g) != "foo bar baz quux\n\nxyzzy\n\n" {
+		t.Fatalf("expected description of testRoom with two stanzas to be `foo bar baz quux\\n\\nxyzzy\\n\\n`, got %q", r.Description(g))
 	}
 }
