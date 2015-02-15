@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/GeertJohan/go.linenoise"
 )
 
 // Rooms holds all rooms in the game. Note that rooms can also be outdoor
@@ -46,6 +49,14 @@ func main() {
 	for {
 		fmt.Println(Rooms[g.CurrentRoom].Description(g))
 		fmt.Println()
-		fmt.Print("> ")
+		line, err := linenoise.Line("> ")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = linenoise.AddHistory(line)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
