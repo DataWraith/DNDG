@@ -6,7 +6,8 @@ import (
 
 // Gamestate holds the current gamestate
 type Gamestate struct {
-	Rng *rand.Rand
+	CurrentRoom int
+	Rng         *rand.Rand
 
 	flags map[string]struct{}
 }
