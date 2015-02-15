@@ -12,8 +12,8 @@ type Gamestate struct {
 }
 
 // NewGamestate creates a new gamestate for the beginning of the Game
-func NewGamestate(rngSeed int64) Gamestate {
-	return Gamestate{
+func NewGamestate(rngSeed int64) *Gamestate {
+	return &Gamestate{
 		Rng: rand.New(rand.NewSource(rngSeed)),
 
 		flags: make(map[string]struct{}),

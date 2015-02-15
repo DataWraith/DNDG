@@ -9,7 +9,7 @@ func TestRoomsShouldDescribeThemselves(t *testing.T) {
 
 	r := Room{
 		DescriptionFuncs: []DescriptionFunc{
-			func(g Gamestate) string {
+			func(g *Gamestate) string {
 				return "You are in a maze of twisty little passages, all alike"
 			},
 		}}
@@ -24,8 +24,8 @@ func TestRoomsShouldDescribeThemselvesWithMultipleStanzas(t *testing.T) {
 
 	r := Room{
 		DescriptionFuncs: []DescriptionFunc{
-			func(g Gamestate) string { return "foo bar baz quux" },
-			func(g Gamestate) string { return "xyzzy" },
+			func(g *Gamestate) string { return "foo bar baz quux" },
+			func(g *Gamestate) string { return "xyzzy" },
 		},
 	}
 
