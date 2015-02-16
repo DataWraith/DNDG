@@ -65,7 +65,20 @@ func main() {
 
 		switch line {
 		case "help":
-			fmt.Printf("Blah blah, Tab completion, blah blah\n\n")
+			fmt.Println(strings.TrimSpace(`
+Blah blah blah, Tab completion, blah blah.
+
+You can type in 'inventory' (abbreviated as 'i' or 'inv') to examine your
+inventory.
+
+You can type in 'commands' (abbreviated as 'c') to display a list of commands
+you can use in your current location. This can contain SPOILERS, so only use
+this if you are truly stuck.
+			`))
+			displayDescription = false
+			continue
+
+		case "c", "commands":
 			fmt.Printf("You can currently issue the following commands:\n\n")
 			for _, action := range Rooms[g.CurrentRoom].Actions {
 				fmt.Printf("* %s\n", action.Command[0])
