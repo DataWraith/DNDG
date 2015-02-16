@@ -117,6 +117,13 @@ not dare to go in" or other equally unpleasant expansions of the acronym.
 			Action{
 				Command: "open gate",
 				Func: func(g *Gamestate) bool {
+					if g.HasFlag("room-000:gate-open") {
+						fmt.Println(strings.TrimSpace(`
+The gate is already open.
+						`))
+						return false
+					}
+
 					if !g.HasFlag("room-000:gate-unlocked") {
 						fmt.Println(strings.TrimSpace(`
 You depress the handle and push, but the gate does not budge. Apparently it is
@@ -130,6 +137,24 @@ You depress the handle and push. The gate swings open with an ear-rending
 creaking noise.
 					`))
 					g.SetFlag("room-000:gate-open")
+					return false
+				},
+			},
+
+			Action{
+				Command: "close gate",
+				Func: func(g *Gamestate) bool {
+					if g.HasFlag("room-000:gate-open") {
+						fmt.Println(strings.TrimSpace(`
+You pull on the gate. With another ear-rending creak, it closes.
+						`))
+						g.UnsetFlag("room-000:gate-open")
+						return false
+					}
+
+					fmt.Println(strings.TrimSpace(`
+The gate is already closed.
+					`))
 					return false
 				},
 			},
