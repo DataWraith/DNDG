@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 )
 
 // Room represents a single location in the game. It has a description and
@@ -11,6 +12,7 @@ type Room struct {
 	ID                 int
 	InitializationFunc InitializationFunc
 	DescriptionFuncs   []DescriptionFunc
+	Actions            []Action
 }
 
 // Description returns the description of a room, built from the current
@@ -38,4 +40,16 @@ func (r Room) Description(g *Gamestate) string {
 		result += "\n\n"
 	}
 	return result
+}
+
+func (r Room) ExecuteAction(action string, g *Gamestate) bool {
+	for _, a := range r.Actions {
+		if a.Command == action {
+			return a.Func(g)
+		}
+	}
+
+	log.Fatalf("unknown action %q performed on Room %3d", action, r.ID)
+
+	panic("unreachable")
 }

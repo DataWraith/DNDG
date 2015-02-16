@@ -17,13 +17,17 @@ func main() {
 	linenoise.AddHistory("help")
 	fmt.Println()
 
+	displayDescription := true
+
 	for {
 		if _, ok := Rooms[g.CurrentRoom]; !ok {
 			log.Fatalf("transitioned to undefined Room #%3d", g.CurrentRoom)
 		}
 
 		// Print the current Room's description
-		fmt.Print(Rooms[g.CurrentRoom].Description(g))
+		if displayDescription {
+			fmt.Print(Rooms[g.CurrentRoom].Description(g))
+		}
 
 		// Get the user's command
 		line, err := linenoise.Line("> ")
@@ -41,5 +45,18 @@ func main() {
 		}
 
 		linenoise.AddHistory(line)
+
+		foundAction := false
+		for _, action := range Rooms[g.CurrentRoom].Actions {
+			if action.Command == line {
+				foundAction = true
+				displayDescription = Rooms[g.CurrentRoom].ExecuteAction(line, g)
+				break
+			}
+		}
+
+		if !foundAction {
+			fmt.Printf("Sorry, I did not understand the command %q\n", line)
+		}
 	}
 }
