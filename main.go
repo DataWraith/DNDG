@@ -10,6 +10,9 @@ import (
 	"github.com/GeertJohan/go.linenoise"
 )
 
+// DEBUG enables or disables debugging functionality for the program
+const DEBUG = true
+
 func transformCommand(command string) string {
 	// First, we need to normalize whitespace
 	fields := strings.Fields(command)
@@ -69,13 +72,17 @@ func main() {
 		}
 
 		// Transform the input to catch slightly different ways of phrasing a command
-		line = transformCommand(line)
+		tline := transformCommand(line)
+
+		if DEBUG && tline != line {
+			log.Printf("Transformed input: %q\n\n", tline)
+		}
 
 		foundAction := false
 		for _, action := range Rooms[g.CurrentRoom].Actions {
-			if action.Command == line {
+			if action.Command == tline {
 				foundAction = true
-				displayDescription = Rooms[g.CurrentRoom].ExecuteAction(line, g)
+				displayDescription = Rooms[g.CurrentRoom].ExecuteAction(tline, g)
 				break
 			}
 		}
