@@ -13,13 +13,18 @@ func makeDescFunc(desc string) func(g *Gamestate) string {
 }
 
 /*
-
+	+-----+
+	| 003 |
+	+-----+
+           |
+	   x
+           |
 	+-----+
 	| 001 |
 	+--+--+
 	   |
 	+--+--+   +-----+
-	| 000 |---| 003 |
+	| 000 |---| 004 |
 	+--+--+   +-----+
 	   |
 	+--+--+
@@ -259,6 +264,78 @@ seems to need watering.
 				Func: func(g *Gamestate) bool {
 					fmt.Println(strings.TrimSpace(`
 Very funny. You don't even have any water to quench your own thirst.
+					`))
+					return false
+				},
+			},
+		},
+	},
+
+	1: Room{
+		ID: 1,
+		DescriptionFuncs: []DescriptionFunc{
+			makeDescFunc(`
+To your left is a smooth stone wall. The road is running in north-south
+direction to your right.
+			`),
+
+			func(g *Gamestate) string {
+				if g.Rng.Float64() < 0.33 {
+					return strings.TrimSpace(`
+Despite its overall smoothness, some of the bricks in the wall appear to be
+cracked.
+					`)
+				}
+				return ""
+			},
+
+			func(g *Gamestate) string {
+				if g.Rng.Float64() < 0.20 {
+					return strings.TrimSpace(`
+A small rodent scurries along the base of the wall.
+					`)
+				}
+				return ""
+			},
+		},
+
+		Actions: []Action{
+			Action{
+				Command: []string{"go north", "north"},
+				Func: func(g *Gamestate) bool {
+					if g.Rng.Float64() < 0.1 {
+						g.CurrentRoom = 3
+					}
+					return true
+				},
+			},
+
+			Action{
+				Command: []string{"go south", "south"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+You walk south until you are back at the gate.
+					`))
+					g.CurrentRoom = 0
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"examine bricks", "x bricks", "examine cracks", "x cracks", "examine cracked bricks", "x cracked bricks"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+There is nothing remarkable about those cracked bricks.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"examine rodent", "x rodent", "examine small rodent", "x small rodent", "examine mouse", "x mouse"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+It seems to have vanished from sight.
 					`))
 					return false
 				},
