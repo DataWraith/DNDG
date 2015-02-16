@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"sort"
 	"strings"
 	"time"
 
@@ -60,7 +61,8 @@ func main() {
 
 		linenoise.AddHistory(line)
 
-		if line == "help" {
+		switch line {
+		case "help":
 			fmt.Printf("Blah blah, Tab completion, blah blah\n\n")
 			fmt.Printf("You can currently issue the following commands:\n\n")
 			for _, action := range Rooms[g.CurrentRoom].Actions {
@@ -69,26 +71,47 @@ func main() {
 			fmt.Println()
 			displayDescription = false
 			continue
-		}
 
-		// Transform the input to catch slightly different ways of phrasing a command
-		tline := transformCommand(line)
+		case "i", "inv", "inventory":
+			fmt.Println("Inventory is not yet implemented")
 
-		if DEBUG && tline != line {
-			log.Printf("Transformed input: %q\n\n", tline)
-		}
+		case "flags":
+			if !DEBUG {
+				fmt.Println("This command is only available in DEBUG mode")
+				continue
+			}
 
-		foundAction := false
-		for _, action := range Rooms[g.CurrentRoom].Actions {
-			if action.Command == tline {
-				foundAction = true
-				displayDescription = Rooms[g.CurrentRoom].ExecuteAction(tline, g)
-				break
+			flags := make([]string, 0, len(g.flags))
+			for k := range g.flags {
+				flags = append(flags, k)
+			}
+			sort.Strings(flags)
+
+			for _, flag := range flags {
+				fmt.Printf("* %s\n", flag)
+			}
+
+		default:
+			// Transform the input to catch slightly different ways of phrasing a command
+			tline := transformCommand(line)
+
+			if DEBUG && tline != line {
+				log.Printf("Transformed input: %q\n\n", tline)
+			}
+
+			foundAction := false
+			for _, action := range Rooms[g.CurrentRoom].Actions {
+				if action.Command == tline {
+					foundAction = true
+					displayDescription = Rooms[g.CurrentRoom].ExecuteAction(tline, g)
+					break
+				}
+			}
+
+			if !foundAction {
+				fmt.Printf("Sorry, I did not understand the command %q\n", line)
 			}
 		}
 
-		if !foundAction {
-			fmt.Printf("Sorry, I did not understand the command %q\n", line)
-		}
 	}
 }
