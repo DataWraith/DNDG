@@ -172,12 +172,32 @@ The gate is already closed.
 			},
 
 			Action{
-				Command: []string{"climb gate"},
+				Command: []string{"climb gate", "climb over gate", "climb wall", "climb over stone wall", "climb over wall"},
 				Func: func(g *Gamestate) bool {
 					fmt.Println(strings.TrimSpace(`
 The spikes on top of the gate look quite menacing, and the smooth stone walls
 on either side don't look very climbable either. You decide to try something
 else.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"examine bushes", "x bushes", "examine plants", "x plants"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+You cross the road to look at the nearest bush. It seems to need watering.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"water bushes", "water plants"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+Very funny. You don't even have any water to quench your own thirst.
 					`))
 					return false
 				},
