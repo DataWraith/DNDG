@@ -57,6 +57,17 @@ func main() {
 
 		linenoise.AddHistory(line)
 
+		if line == "help" {
+			fmt.Printf("Blah blah, Tab completion, blah blah\n\n")
+			fmt.Printf("You can currently issue the following commands:\n\n")
+			for _, action := range Rooms[g.CurrentRoom].Actions {
+				fmt.Printf("* %s\n", action.Command)
+			}
+			fmt.Println()
+			displayDescription = false
+			continue
+		}
+
 		// Transform the input to catch slightly different ways of phrasing a command
 		line = transformCommand(line)
 
