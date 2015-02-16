@@ -94,7 +94,7 @@ The wrought-iron gate is currently closed.
 			},
 
 			Action{
-				Command: []string{"examine gate"},
+				Command: []string{"examine gate", "x gate"},
 				Func: func(g *Gamestate) bool {
 					if !g.HasFlag("room-000:gate-open") {
 						fmt.Println(strings.TrimSpace(`

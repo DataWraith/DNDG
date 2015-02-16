@@ -15,7 +15,7 @@ import (
 const DEBUG = true
 
 // AllCommands is a global variable holding all currently valid commands
-var AllCommands []string
+var AllCommands []Action
 
 func transformCommand(command string) string {
 	// First, we need to normalize whitespace
@@ -39,31 +39,24 @@ func main() {
 	displayDescription := true
 
 	for {
+		fmt.Println()
+
 		if _, ok := Rooms[g.CurrentRoom]; !ok {
 			log.Fatalf("transitioned to undefined Room #%03d", g.CurrentRoom)
 		}
 
 		// Setup AllCommands (needed for tab-completion)
-		AllCommands = []string{"help", "commands", "exit", "quit", "inventory"}
-		for _, action := range Rooms[g.CurrentRoom].Actions {
-			for _, cmd := range action.Command {
-				AllCommands = append(AllCommands, cmd)
-			}
-		}
-		sort.Strings(AllCommands)
+		AllCommands = Rooms[g.CurrentRoom].Actions
 
 		// Print the current Room's description
 		if displayDescription {
 			fmt.Print(Rooms[g.CurrentRoom].Description(g))
-		} else {
-			fmt.Println()
 		}
+		displayDescription = false
 
 		// Get the user's command
 		line, err := linenoise.Line("> ")
 		line = strings.ToLower(line)
-
-		fmt.Println()
 
 		// Exit the game if the user wants to leave
 		if line == "exit" || line == "quit" || err == linenoise.KillSignalError {
@@ -78,7 +71,6 @@ func main() {
 
 		switch line {
 		case "":
-			displayDescription = false
 			continue
 
 		case "help":
@@ -91,7 +83,6 @@ You can type in 'commands' (abbreviated as 'c') to display a list of commands
 you can use in your current location. This can contain SPOILERS, so only use
 this if you are truly stuck.
 			`))
-			displayDescription = false
 			continue
 
 		case "c", "commands":
@@ -99,7 +90,6 @@ this if you are truly stuck.
 			for _, action := range Rooms[g.CurrentRoom].Actions {
 				fmt.Printf("* %s\n", action.Command[0])
 			}
-			displayDescription = false
 			continue
 
 		case "i", "inventory":
@@ -137,6 +127,7 @@ this if you are truly stuck.
 				for _, cmd := range action.Command {
 					if cmd == tline {
 						foundAction = true
+						fmt.Println()
 						displayDescription = Rooms[g.CurrentRoom].ExecuteAction(tline, g)
 						break
 					}
@@ -146,10 +137,12 @@ this if you are truly stuck.
 			if !foundAction {
 				completion := CommandCompletion(tline)
 				if len(completion) == 1 {
-					displayDescription = Rooms[g.CurrentRoom].ExecuteAction(tline, g)
+					fmt.Println(">", completion[0])
+					fmt.Println()
+					displayDescription = Rooms[g.CurrentRoom].ExecuteAction(completion[0], g)
 					continue
 				} else if len(completion) > 1 {
-					fmt.Printf("The command %q was ambiguous. Which of the following did you mean?\n\n", line)
+					fmt.Printf("\nThe command %q was ambiguous. Which of the following did you mean?\n\n", line)
 					for _, c := range completion {
 						fmt.Printf("* %s\n", c)
 					}
