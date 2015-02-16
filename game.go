@@ -171,7 +171,7 @@ The gate is already closed.
 			},
 
 			Action{
-				Command: []string{"climb", "climb gate"},
+				Command: []string{"climb gate"},
 				Func: func(g *Gamestate) bool {
 					fmt.Println(strings.TrimSpace(`
 The spikes on top of the gate look quite menacing, and the smooth stone walls

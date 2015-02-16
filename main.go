@@ -38,6 +38,7 @@ func main() {
 
 	displayDescription := true
 
+gameloop:
 	for {
 		fmt.Println()
 
@@ -58,8 +59,8 @@ func main() {
 		line, err := linenoise.Line("> ")
 		line = strings.ToLower(line)
 
-		// Exit the game if the user wants to leave
-		if line == "exit" || line == "quit" || err == linenoise.KillSignalError {
+		// Exit the game if the user pressed CTRL+C or CTRL+D
+		if err == linenoise.KillSignalError {
 			return
 		}
 
@@ -69,35 +70,53 @@ func main() {
 
 		linenoise.AddHistory(line)
 
-		switch line {
-		case "":
+		// Transform the input to catch slightly different ways of phrasing a command
+		tline := transformCommand(line)
+
+		if tline == "" {
 			continue
+		}
+
+		if DEBUG && tline != line {
+			log.Printf("Transformed input: %q\n\n", tline)
+		}
+
+		completion := CommandCompletion(tline)
+		command := ""
+
+		if len(completion) == 0 {
+			fmt.Printf("\nSorry, I did not understand the command %q\n", line)
+			continue
+		} else if len(completion) == 1 {
+			if completion[0] != tline {
+				fmt.Println(">", completion[0])
+			}
+			command = completion[0]
+		} else {
+			fmt.Printf("\nThe command %q was ambiguous. Which of the following did you mean?\n\n", line)
+			for _, c := range completion {
+				fmt.Printf("* %s\n", c)
+			}
+			continue
+		}
+
+		switch command {
+		case "exit", "quit":
+			return
 
 		case "help":
 			fmt.Println(strings.TrimSpace(`
 Blah blah blah, Tab completion, blah blah.
 
-You can type in 'inventory' (abbreviated as 'i') to examine your inventory.
-
-You can type in 'commands' (abbreviated as 'c') to display a list of commands
-you can use in your current location. This can contain SPOILERS, so only use
-this if you are truly stuck.
+You can type in 'inventory' to examine your inventory.
 			`))
-			continue
 
-		case "c", "commands":
-			fmt.Printf("You can currently issue the following commands:\n\n")
-			for _, action := range Rooms[g.CurrentRoom].Actions {
-				fmt.Printf("* %s\n", action.Command[0])
-			}
-			continue
-
-		case "i", "inventory":
-			fmt.Println("Inventory is not yet implemented")
+		case "inventory":
+			fmt.Println("\nInventory is not yet implemented")
 
 		case "f", "flags":
 			if !DEBUG {
-				fmt.Println("This command is only available in DEBUG mode")
+				fmt.Println("\nThis command is only available in DEBUG mode")
 				continue
 			}
 
@@ -107,49 +126,23 @@ this if you are truly stuck.
 			}
 			sort.Strings(flags)
 
+			fmt.Println()
 			for _, flag := range flags {
 				fmt.Printf("* %s\n", flag)
 			}
 
 		case "xyzzy":
-			fmt.Println("Nothing happens.")
+			fmt.Println("\nNothing happens.")
 
 		default:
-			// Transform the input to catch slightly different ways of phrasing a command
-			tline := transformCommand(line)
-
-			if DEBUG && tline != line {
-				log.Printf("Transformed input: %q\n\n", tline)
-			}
-
-			foundAction := false
 			for _, action := range Rooms[g.CurrentRoom].Actions {
 				for _, cmd := range action.Command {
-					if cmd == tline {
-						foundAction = true
+					if cmd == command {
 						fmt.Println()
-						displayDescription = Rooms[g.CurrentRoom].ExecuteAction(tline, g)
-						break
+						displayDescription = Rooms[g.CurrentRoom].ExecuteAction(command, g)
+						continue gameloop
 					}
 				}
-			}
-
-			if !foundAction {
-				completion := CommandCompletion(tline)
-				if len(completion) == 1 {
-					fmt.Println(">", completion[0])
-					fmt.Println()
-					displayDescription = Rooms[g.CurrentRoom].ExecuteAction(completion[0], g)
-					continue
-				} else if len(completion) > 1 {
-					fmt.Printf("\nThe command %q was ambiguous. Which of the following did you mean?\n\n", line)
-					for _, c := range completion {
-						fmt.Printf("* %s\n", c)
-					}
-					continue
-				}
-
-				fmt.Printf("Sorry, I did not understand the command %q\n", line)
 			}
 		}
 
