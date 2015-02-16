@@ -59,7 +59,7 @@ occasional bush. The bushes don't look very healthy either.
 
 		Actions: []Action{
 			Action{
-				Command: "go north",
+				Command: []string{"go north"},
 				Func: func(g *Gamestate) bool {
 					g.CurrentRoom = 1
 					return true
@@ -67,7 +67,7 @@ occasional bush. The bushes don't look very healthy either.
 			},
 
 			Action{
-				Command: "go south",
+				Command: []string{"go south"},
 				Func: func(g *Gamestate) bool {
 					g.CurrentRoom = 2
 					return true
@@ -75,7 +75,7 @@ occasional bush. The bushes don't look very healthy either.
 			},
 
 			Action{
-				Command: "go through gate",
+				Command: []string{"go through gate", "go gate"},
 				Func: func(g *Gamestate) bool {
 					if g.HasFlag("room-000:gate-open") {
 						fmt.Println(strings.TrimSpace(`
@@ -94,7 +94,7 @@ The wrought-iron gate is currently closed.
 			},
 
 			Action{
-				Command: "examine gate",
+				Command: []string{"examine gate"},
 				Func: func(g *Gamestate) bool {
 					if !g.HasFlag("room-000:gate-open") {
 						fmt.Println(strings.TrimSpace(`
@@ -115,7 +115,7 @@ not dare to go in" or other equally unpleasant expansions of the acronym.
 			},
 
 			Action{
-				Command: "open gate",
+				Command: []string{"open gate", "push gate"},
 				Func: func(g *Gamestate) bool {
 					if g.HasFlag("room-000:gate-open") {
 						fmt.Println(strings.TrimSpace(`
@@ -142,7 +142,7 @@ creaking noise.
 			},
 
 			Action{
-				Command: "close gate",
+				Command: []string{"close gate", "pull gate"},
 				Func: func(g *Gamestate) bool {
 					if g.HasFlag("room-000:gate-open") {
 						fmt.Println(strings.TrimSpace(`
@@ -154,6 +154,18 @@ You pull on the gate. With another ear-rending creak, it closes.
 
 					fmt.Println(strings.TrimSpace(`
 The gate is already closed.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"climb", "climb gate"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+The spikes on top of the gate look quite menacing, and the smooth stone walls
+on either side don't look very climbable either. You decide to try something
+else.
 					`))
 					return false
 				},

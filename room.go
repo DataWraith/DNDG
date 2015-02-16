@@ -45,8 +45,10 @@ func (r Room) Description(g *Gamestate) string {
 // ExecuteAction executes the room's action with the given name
 func (r Room) ExecuteAction(action string, g *Gamestate) bool {
 	for _, a := range r.Actions {
-		if a.Command == action {
-			return a.Func(g)
+		for _, cmd := range a.Command {
+			if cmd == action {
+				return a.Func(g)
+			}
 		}
 	}
 

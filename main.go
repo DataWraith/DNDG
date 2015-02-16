@@ -66,7 +66,7 @@ func main() {
 			fmt.Printf("Blah blah, Tab completion, blah blah\n\n")
 			fmt.Printf("You can currently issue the following commands:\n\n")
 			for _, action := range Rooms[g.CurrentRoom].Actions {
-				fmt.Printf("* %s\n", action.Command)
+				fmt.Printf("* %s\n", action.Command[0])
 			}
 			fmt.Println()
 			displayDescription = false
@@ -101,10 +101,12 @@ func main() {
 
 			foundAction := false
 			for _, action := range Rooms[g.CurrentRoom].Actions {
-				if action.Command == tline {
-					foundAction = true
-					displayDescription = Rooms[g.CurrentRoom].ExecuteAction(tline, g)
-					break
+				for _, cmd := range action.Command {
+					if cmd == tline {
+						foundAction = true
+						displayDescription = Rooms[g.CurrentRoom].ExecuteAction(tline, g)
+						break
+					}
 				}
 			}
 

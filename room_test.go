@@ -44,7 +44,7 @@ func TestRoomsShouldHaveAvailableActions(t *testing.T) {
 
 		Actions: []Action{
 			Action{
-				Command: "go north",
+				Command: []string{"go north"},
 				Func: func(g *Gamestate) bool {
 					g.CurrentRoom = 1
 					return true
