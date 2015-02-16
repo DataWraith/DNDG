@@ -46,10 +46,21 @@ occasional bush. The bushes don't look very healthy either.
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	g := NewGamestate(rand.Int63())
+
+	linenoise.AddHistory("help")
+
 	for {
-		fmt.Println(Rooms[g.CurrentRoom].Description(g))
-		fmt.Println()
+		fmt.Print(Rooms[g.CurrentRoom].Description(g))
+
+		// Get the user's command
 		line, err := linenoise.Line("> ")
+		fmt.Println()
+
+		// Exit the game if the user wants to leave
+		if strings.EqualFold(line, "exit") || strings.EqualFold(line, "quit") || err == linenoise.KillSignalError {
+			return
+		}
+
 		if err != nil {
 			log.Fatal(err)
 		}
