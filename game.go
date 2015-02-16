@@ -90,7 +90,7 @@ occasional bush. The bushes don't look very healthy either.
 You go through the wrought-iron gate.
 						`))
 
-						g.CurrentRoom = 3
+						g.CurrentRoom = 4
 						return true
 					}
 
@@ -117,6 +117,16 @@ not dare to go in" or other equally unpleasant expansions of the acronym.
 The gate is an intricately wrought-iron structure. It is slightly ajar. The
 bars form the initials 'DNDG', and you idly wonder whether that stands for "Do
 not dare to go in" or other equally unpleasant expansions of the acronym.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"examine wall", "x wall", "examine stone wall", "x stone wall"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+A fairly smooth and featureless wall made out of stone bricks.
 					`))
 					return false
 				},
@@ -152,10 +162,18 @@ creaking noise.
 			Action{
 				Command: []string{"unlock gate", "unlock", "use key", "use key on gate", "use key on lock"},
 				Func: func(g *Gamestate) bool {
-					// TODO: Check inventory for key
-					fmt.Println(strings.TrimSpace(`
+					if !g.HasFlag("gate-key") {
+						fmt.Println(strings.TrimSpace(`
 You need a key to unlock the gate.
 					`))
+						return false
+					}
+
+					fmt.Println(strings.TrimSpace(`
+You take the key from your pocket and insert it into the lock of the gate. It fits!
+You turn the key. With a loud click, the gate unlocks.
+					`))
+					g.SetFlag("room-000:gate-unlocked")
 					return false
 				},
 			},
@@ -191,7 +209,7 @@ else.
 			},
 
 			Action{
-				Command: []string{"jump over", "jump gate", "jump wall", "jump stone wall", "vault", "vault gate", "vault wall", "vault stone wall"},
+				Command: []string{"jump over gate", "jump gate", "jump wall", "jump stone wall", "vault", "vault gate", "vault wall", "vault stone wall"},
 				Func: func(g *Gamestate) bool {
 					fmt.Println(strings.TrimSpace(`
 You'd need to be an olympic athlete to jump that high. And you'd need to know
@@ -305,7 +323,7 @@ A small rodent scurries along the base of the wall.
 			Action{
 				Command: []string{"go north", "north"},
 				Func: func(g *Gamestate) bool {
-					if g.Rng.Float64() < 0.1 {
+					if g.Rng.Float64() < 0.2 {
 						g.CurrentRoom = 3
 					}
 					return true
@@ -386,6 +404,148 @@ The bushes look dry and not very healthy.
 					return false
 				},
 			},
+		},
+	},
+
+	3: Room{
+		ID: 3,
+		DescriptionFuncs: []DescriptionFunc{
+			makeDescFunc(`
+You notice a small fountain set into the wall to the west. There are some
+bushes on the other side of the road.
+			`),
+
+			func(g *Gamestate) string {
+				if !g.HasFlag("gate-key") {
+					return "A key is lying in the fountain's basin."
+				}
+
+				return ""
+			},
+		},
+
+		Actions: []Action{
+			Action{
+				Command: []string{"go north", "north"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+You really don't want to go any further north, now that you have found
+something.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"go south", "south"},
+				Func: func(g *Gamestate) bool {
+					g.CurrentRoom = 1
+					return true
+				},
+			},
+
+			Action{
+				Command: []string{"examine fountain", "x key", "examine key", "x fountain"},
+				Func: func(g *Gamestate) bool {
+					if !g.HasFlag("gate-key") {
+						fmt.Println(strings.TrimSpace(`
+There is a key lying in the basin of the little fountain. Water is splashing
+right on top of it.
+					`))
+						return false
+					}
+					fmt.Println(strings.TrimSpace(`
+A lively little fountain. There is nothing special about it.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"examine road", "x road"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+A dust-caked asphalt road with faded lane markings.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"drink water"},
+				Func: func(g *Gamestate) bool {
+					if !g.HasFlag("room-003:not-thirsty") {
+						fmt.Println(strings.TrimSpace(`
+You're not sure if it is such a great idea to drink water from a random
+fountain in the middle of nowhere, but you're very thirsty by now. You scoop up
+the water with both hands and drink, repeatedly.
+					`))
+						g.SetFlag("room-003:not-thirsty")
+						return false
+					}
+
+					fmt.Println(strings.TrimSpace(`
+You're not really thirsty anymore.
+				`))
+					return false
+
+				},
+			},
+
+			Action{
+				Command: []string{"take the key", "take key"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+You take the key out of the fountain's basin and shake the water off. You
+pocket the key.
+					`))
+					g.SetFlag("gate-key")
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"examine bushes", "x bushes", "examine plants", "x plants"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+The bushes look dried out and unhealthy. You could probably scoop up a little
+water from the fountain, carry it across the road, and water the plants.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"water bushes", "water plants"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+You scoop up a handfull of water and carry it across the road. Most of the
+water doesn't make it across the road, but you imagine that the bush you just
+watered at least a little, is thankful and owes you something. Or something.
+					`))
+					return false
+				},
+			},
+		},
+	},
+
+	4: Room{
+		ID: 4,
+		DescriptionFuncs: []DescriptionFunc{
+			makeDescFunc(`
+Behind the gate is a gravel path that leads to an oddly familiar house. Hey,
+this is your house! But what is it doing here, in the middle of nowhere?
+
+The door is slightly ajar, and you enter. You see yourself sleeping in your
+bed. Suddenly you are in the bed, and as you open your eyes, you realize that
+you had a rather strange dream. You wonder idly what the gate and the key
+represent in your subconsciousness, and which real-life abilities or feelings
+you might have locked away...
+
+*** YOU'VE WON THE GAME ***
+
+Enter 'exit' to quit.
+			`),
 		},
 	},
 }
