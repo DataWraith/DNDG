@@ -5,7 +5,7 @@ import (
 )
 
 // CommandStrings is the list of top-level commands
-var CommandStrings = []string{"help", "inventory", "exit", "quit", "flags"}
+var CommandStrings = []string{"help", "inventory", "exit", "quit", "flags", "commands"}
 
 func allCommandsHas(command string) bool {
 	for _, action := range AllCommands {

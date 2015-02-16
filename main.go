@@ -123,7 +123,7 @@ You can type in 'inventory' to examine your inventory.
 		case "inventory":
 			fmt.Println("\nInventory is not yet implemented")
 
-		case "f", "flags":
+		case "flags":
 			if !DEBUG {
 				fmt.Println("\nThis command is only available in DEBUG mode")
 				continue
@@ -138,6 +138,23 @@ You can type in 'inventory' to examine your inventory.
 			fmt.Println()
 			for _, flag := range flags {
 				fmt.Printf("* %s\n", flag)
+			}
+
+		case "commands":
+			if !DEBUG {
+				fmt.Println("\nThis command is only available in DEBUG mode")
+				continue
+			}
+
+			var cmds []string
+
+			for _, action := range AllCommands {
+				cmds = append(cmds, action.Command[0])
+			}
+			sort.Strings(cmds)
+
+			for _, cmd := range cmds {
+				fmt.Printf("* %s\n", cmd)
 			}
 
 		case "xyzzy":
