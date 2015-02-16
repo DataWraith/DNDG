@@ -28,6 +28,10 @@ func CommandCompletion(input string) []string {
 		return []string{"xyzzy"}
 	}
 
+	if input == "die" || input == "kill yourself" {
+		return []string{"die"}
+	}
+
 	if len(input) == 1 {
 		switch input {
 		case "n":

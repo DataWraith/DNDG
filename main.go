@@ -160,6 +160,10 @@ You can type in 'inventory' to examine your inventory.
 		case "xyzzy":
 			fmt.Println("\nNothing happens.")
 
+		case "die":
+			fmt.Println("\nYou give up on life and wither away.")
+			return
+
 		default:
 			for _, action := range Rooms[g.CurrentRoom].Actions {
 				for _, cmd := range action.Command {
