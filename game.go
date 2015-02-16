@@ -13,24 +13,26 @@ func makeDescFunc(desc string) func(g *Gamestate) string {
 }
 
 /*
-	+-----+
-	| 003 |
-	+-----+
-           |
-	   x
-           |
-	+-----+
-	| 001 |
-	+--+--+
-	   |
-	+--+--+   +-----+
-	| 000 |---| 004 |
-	+--+--+   +-----+
-	   |
-	+--+--+
-	| 002 |
-	+-----+
-
+          +-----+
+          | 003 |
+          +-----+
+             |
+             x
+             |
+          +-----+
+          | 001 |
+          +--+--+
+             |
++-----+   +--+--+
+| 004 |---| 000 |
++-----+   +--+--+
+             |
+          +--+--+
+          | 002 |
+          +-----+
+           |  ^
+           |  |
+           +--+
 */
 
 // Rooms holds all rooms in the game. Note that rooms can also be outdoor
@@ -275,7 +277,7 @@ Very funny. You don't even have any water to quench your own thirst.
 		ID: 1,
 		DescriptionFuncs: []DescriptionFunc{
 			makeDescFunc(`
-To your left is a smooth stone wall. The road is running in north-south
+To the west is a smooth stone wall. The road is running in north-south
 direction to your right.
 			`),
 
@@ -336,6 +338,50 @@ There is nothing remarkable about those cracked bricks.
 				Func: func(g *Gamestate) bool {
 					fmt.Println(strings.TrimSpace(`
 It seems to have vanished from sight.
+					`))
+					return false
+				},
+			},
+		},
+	},
+
+	2: Room{
+		ID: 2,
+		DescriptionFuncs: []DescriptionFunc{
+			makeDescFunc(`
+To the west is a relatively smooth stone wall. A road is running in north-south
+direction. On the other side of the road is dry-land with some bushes scattered
+about, but no clear destination in sight.
+			`),
+		},
+		Actions: []Action{
+			Action{
+				Command: []string{"go north", "north"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+You walk north until you are back at the gate.
+					`))
+					g.CurrentRoom = 0
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"go south", "south"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+You continue walking south, but all you can see is that stupid wall and the
+deserted road.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"examine bushes", "x bushes", "examine plants", "x plants"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+The bushes look dry and not very healthy.
 					`))
 					return false
 				},
