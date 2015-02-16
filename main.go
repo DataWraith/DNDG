@@ -40,9 +40,6 @@ func main() {
 			log.Fatal(err)
 		}
 
-		err = linenoise.AddHistory(line)
-		if err != nil {
-			log.Fatal(err)
-		}
+		linenoise.AddHistory(line)
 	}
 }
