@@ -19,7 +19,7 @@ type Room struct {
 // Gamestate and the room's array of DescriptionFuncs.
 func (r Room) Description(g *Gamestate) string {
 	// Call the initialization function of the room if it wasn't called before
-	initFlag := fmt.Sprintf("room-%3d:initialized", r.ID)
+	initFlag := fmt.Sprintf("room-%03d:initialized", r.ID)
 	if !g.HasFlag(initFlag) {
 		if r.InitializationFunc != nil {
 			r.InitializationFunc(g)
@@ -42,6 +42,7 @@ func (r Room) Description(g *Gamestate) string {
 	return result
 }
 
+// ExecuteAction executes the room's action with the given name
 func (r Room) ExecuteAction(action string, g *Gamestate) bool {
 	for _, a := range r.Actions {
 		if a.Command == action {
@@ -49,7 +50,7 @@ func (r Room) ExecuteAction(action string, g *Gamestate) bool {
 		}
 	}
 
-	log.Fatalf("unknown action %q performed on Room %3d", action, r.ID)
+	log.Fatalf("unknown action %q performed on Room %03d", action, r.ID)
 
 	panic("unreachable")
 }

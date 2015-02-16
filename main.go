@@ -10,6 +10,17 @@ import (
 	"github.com/GeertJohan/go.linenoise"
 )
 
+func transformCommand(command string) string {
+	// First, we need to normalize whitespace
+	fields := strings.Fields(command)
+	result := strings.Join(fields, " ")
+
+	result = strings.Replace(result, " the ", "", -1)
+	result = strings.Replace(result, "look at", "examine", -1)
+
+	return result
+}
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	g := NewGamestate(rand.Int63())
@@ -21,7 +32,7 @@ func main() {
 
 	for {
 		if _, ok := Rooms[g.CurrentRoom]; !ok {
-			log.Fatalf("transitioned to undefined Room #%3d", g.CurrentRoom)
+			log.Fatalf("transitioned to undefined Room #%03d", g.CurrentRoom)
 		}
 
 		// Print the current Room's description
@@ -45,6 +56,9 @@ func main() {
 		}
 
 		linenoise.AddHistory(line)
+
+		// Transform the input to catch slightly different ways of phrasing a command
+		line = transformCommand(line)
 
 		foundAction := false
 		for _, action := range Rooms[g.CurrentRoom].Actions {
