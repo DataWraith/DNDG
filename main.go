@@ -50,6 +50,11 @@ func main() {
 	linenoise.AddHistory("help")
 
 	for {
+		if _, ok := Rooms[g.CurrentRoom]; !ok {
+			log.Fatalf("transitioned to undefined Room #%3d", g.CurrentRoom)
+		}
+
+		// Print the current Room's description
 		fmt.Print(Rooms[g.CurrentRoom].Description(g))
 
 		// Get the user's command
