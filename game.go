@@ -296,7 +296,7 @@ Very funny. You don't even have any water to quench your own thirst.
 		DescriptionFuncs: []DescriptionFunc{
 			makeDescFunc(`
 To the west is a smooth stone wall. The road is running in north-south
-direction to your right.
+direction to your east.
 			`),
 
 			func(g *Gamestate) string {
@@ -536,11 +536,11 @@ watered at least a little, is thankful and owes you something. Or something.
 Behind the gate is a gravel path that leads to an oddly familiar house. Hey,
 this is your house! But what is it doing here, in the middle of nowhere?
 
-The door is slightly ajar, and you enter. You see yourself sleeping in your
-bed. Suddenly you are in the bed, and as you open your eyes, you realize that
-you had a rather strange dream. You wonder idly what the gate and the key
-represent in your subconsciousness, and which real-life abilities or feelings
-you might have locked away...
+The door is slightly ajar, and you enter. You make for your own room. You see
+yourself sleeping in your bed. Suddenly you are in the bed, and as you open
+your eyes, you realize that you had a rather strange dream. You wonder idly
+what the gate and the key represent in your subconsciousness, and which
+real-life abilities or feelings you might have locked away...
 
 *** YOU'VE WON THE GAME ***
 
