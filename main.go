@@ -19,7 +19,7 @@ func transformCommand(command string) string {
 	fields := strings.Fields(command)
 	result := strings.Join(fields, " ")
 
-	result = strings.Replace(result, " the ", "", -1)
+	result = strings.Replace(result, "the ", "", -1)
 	result = strings.Replace(result, "look at", "examine", -1)
 
 	return result
@@ -42,6 +42,8 @@ func main() {
 		// Print the current Room's description
 		if displayDescription {
 			fmt.Print(Rooms[g.CurrentRoom].Description(g))
+		} else {
+			fmt.Println()
 		}
 
 		// Get the user's command
@@ -68,7 +70,6 @@ func main() {
 			for _, action := range Rooms[g.CurrentRoom].Actions {
 				fmt.Printf("* %s\n", action.Command[0])
 			}
-			fmt.Println()
 			displayDescription = false
 			continue
 
