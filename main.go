@@ -23,6 +23,7 @@ func transformCommand(command string) string {
 	result := strings.Join(fields, " ")
 
 	result = strings.Replace(result, "the ", "", -1)
+	result = strings.Replace(result, "over ", "", -1)
 	result = strings.Replace(result, "look at", "examine", -1)
 
 	return result

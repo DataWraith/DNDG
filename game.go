@@ -172,7 +172,7 @@ The gate is already closed.
 			},
 
 			Action{
-				Command: []string{"climb gate", "climb over gate", "climb wall", "climb over stone wall", "climb over wall"},
+				Command: []string{"climb gate", "climb wall", "climb stone wall"},
 				Func: func(g *Gamestate) bool {
 					fmt.Println(strings.TrimSpace(`
 The spikes on top of the gate look quite menacing, and the smooth stone walls
@@ -184,10 +184,71 @@ else.
 			},
 
 			Action{
-				Command: []string{"examine bushes", "x bushes", "examine plants", "x plants"},
+				Command: []string{"jump over", "jump gate", "jump wall", "jump stone wall", "vault", "vault gate", "vault wall", "vault stone wall"},
 				Func: func(g *Gamestate) bool {
 					fmt.Println(strings.TrimSpace(`
-You cross the road to look at the nearest bush. It seems to need watering.
+You'd need to be an olympic athlete to jump that high. And you'd need to know
+how to pole vault. And you'd need a pole. And you'd need to not impale yourself
+on the gate's spikes...
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"examine road", "x road"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+It's an asphalt road. The lane markings are old and faded out, and dust covers
+much of the surface. You notice ants scurring around some of the cracks in the surface.
+					`))
+					g.SetFlag("room-000:found-ants")
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"examine ants", "x ants"},
+				Func: func(g *Gamestate) bool {
+					if !g.HasFlag("room-000:found-ants") {
+						fmt.Println(strings.TrimSpace(`
+There are no ants here.
+						`))
+						return false
+					}
+
+					fmt.Println(strings.TrimSpace(`
+Little reddish-brown ants are scurrying around on the surface of the road. You
+could stomp on them, but they're probably too tiny to actually get squished by
+that. Besides, what have they done to you, to deserve such a fate?
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"stomp ants"},
+				Func: func(g *Gamestate) bool {
+					if !g.HasFlag("room-000:found-ants") {
+						fmt.Println("There are no ants here.")
+						return false
+					}
+
+					fmt.Println(strings.TrimSpace(`
+Seriously? Oh, okay...
+
+You try to stomp the ants, but nothing satisfying happens.
+					`))
+					return false
+				},
+			},
+
+			Action{
+				Command: []string{"examine bushes", "x bushes", "examine plants", "x plants", "examine leaves", "x leaves"},
+				Func: func(g *Gamestate) bool {
+					fmt.Println(strings.TrimSpace(`
+You cross the road to look at the nearest bush. The leaves look dry. The bush
+seems to need watering.
 					`))
 					return false
 				},
