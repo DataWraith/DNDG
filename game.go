@@ -59,7 +59,7 @@ occasional bush. The bushes don't look very healthy either.
 
 		Actions: []Action{
 			Action{
-				Command: []string{"go north"},
+				Command: []string{"go north", "north"},
 				Func: func(g *Gamestate) bool {
 					g.CurrentRoom = 1
 					return true
@@ -67,7 +67,7 @@ occasional bush. The bushes don't look very healthy either.
 			},
 
 			Action{
-				Command: []string{"go south"},
+				Command: []string{"go south", "south"},
 				Func: func(g *Gamestate) bool {
 					g.CurrentRoom = 2
 					return true

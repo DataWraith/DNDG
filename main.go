@@ -14,6 +14,9 @@ import (
 // DEBUG enables or disables debugging functionality for the program
 const DEBUG = true
 
+// AllCommands is a global variable holding all currently valid commands
+var AllCommands []string
+
 func transformCommand(command string) string {
 	// First, we need to normalize whitespace
 	fields := strings.Fields(command)
@@ -29,6 +32,7 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 	g := NewGamestate(rand.Int63())
 
+	linenoise.SetCompletionHandler(CommandCompletion)
 	linenoise.AddHistory("help")
 	fmt.Println()
 
@@ -38,6 +42,15 @@ func main() {
 		if _, ok := Rooms[g.CurrentRoom]; !ok {
 			log.Fatalf("transitioned to undefined Room #%03d", g.CurrentRoom)
 		}
+
+		// Setup AllCommands (needed for tab-completion)
+		AllCommands = []string{"help", "commands", "exit", "quit", "inventory"}
+		for _, action := range Rooms[g.CurrentRoom].Actions {
+			for _, cmd := range action.Command {
+				AllCommands = append(AllCommands, cmd)
+			}
+		}
+		sort.Strings(AllCommands)
 
 		// Print the current Room's description
 		if displayDescription {
@@ -64,6 +77,10 @@ func main() {
 		linenoise.AddHistory(line)
 
 		switch line {
+		case "":
+			displayDescription = false
+			continue
+
 		case "help":
 			fmt.Println(strings.TrimSpace(`
 Blah blah blah, Tab completion, blah blah.
@@ -104,6 +121,9 @@ this if you are truly stuck.
 				fmt.Printf("* %s\n", flag)
 			}
 
+		case "xyzzy":
+			fmt.Println("Nothing happens.")
+
 		default:
 			// Transform the input to catch slightly different ways of phrasing a command
 			tline := transformCommand(line)
@@ -124,6 +144,18 @@ this if you are truly stuck.
 			}
 
 			if !foundAction {
+				completion := CommandCompletion(tline)
+				if len(completion) == 1 {
+					displayDescription = Rooms[g.CurrentRoom].ExecuteAction(tline, g)
+					continue
+				} else if len(completion) > 1 {
+					fmt.Printf("The command %q was ambiguous. Which of the following did you mean?\n\n", line)
+					for _, c := range completion {
+						fmt.Printf("* %s\n", c)
+					}
+					continue
+				}
+
 				fmt.Printf("Sorry, I did not understand the command %q\n", line)
 			}
 		}
