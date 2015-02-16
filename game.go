@@ -142,6 +142,17 @@ creaking noise.
 			},
 
 			Action{
+				Command: []string{"unlock gate", "unlock", "use key", "use key on gate"},
+				Func: func(g *Gamestate) bool {
+					// TODO: Check inventory for key
+					fmt.Println(strings.TrimSpace(`
+You need a key to unlock the gate.
+					`))
+					return false
+				},
+			},
+
+			Action{
 				Command: []string{"close gate", "pull gate"},
 				Func: func(g *Gamestate) bool {
 					if g.HasFlag("room-000:gate-open") {

@@ -68,8 +68,7 @@ func main() {
 			fmt.Println(strings.TrimSpace(`
 Blah blah blah, Tab completion, blah blah.
 
-You can type in 'inventory' (abbreviated as 'i' or 'inv') to examine your
-inventory.
+You can type in 'inventory' (abbreviated as 'i') to examine your inventory.
 
 You can type in 'commands' (abbreviated as 'c') to display a list of commands
 you can use in your current location. This can contain SPOILERS, so only use
@@ -86,10 +85,10 @@ this if you are truly stuck.
 			displayDescription = false
 			continue
 
-		case "i", "inv", "inventory":
+		case "i", "inventory":
 			fmt.Println("Inventory is not yet implemented")
 
-		case "flags":
+		case "f", "flags":
 			if !DEBUG {
 				fmt.Println("This command is only available in DEBUG mode")
 				continue
