@@ -10,44 +10,12 @@ import (
 	"github.com/GeertJohan/go.linenoise"
 )
 
-// Rooms holds all rooms in the game. Note that rooms can also be outdoor
-// locations.
-var Rooms = map[int]Room{
-	0: Room{
-		ID: 0,
-		DescriptionFuncs: []DescriptionFunc{
-			func(g *Gamestate) string {
-				if !g.HasFlag("room-000:gate-open") {
-					return strings.TrimSpace(`
-You are standing in front of a wrought iron gate. It is fairly massive, with
-spikes on top. The gate is currently closed, and next to it is a stone wall
-three meters in height.
-					`)
-				}
-
-				return strings.TrimSpace(`
-You are standing in front of a wrought iron gate. It is fairly massive, with
-spikes on top. The gate is currently open.
-				`)
-			},
-
-			func(g *Gamestate) string {
-				return strings.TrimSpace(`
-A rugged asphalt road is running beside the gate in north-south direction. Not
-a single car is in sight. On the other side of the road, there is nothing of
-interest. Only barren dry-land as far as the eye can see, punctuated by the
-occasional bush. The bushes don't look very healthy either.
-				`)
-			},
-		},
-	},
-}
-
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	g := NewGamestate(rand.Int63())
 
 	linenoise.AddHistory("help")
+	fmt.Println()
 
 	for {
 		if _, ok := Rooms[g.CurrentRoom]; !ok {
@@ -59,10 +27,12 @@ func main() {
 
 		// Get the user's command
 		line, err := linenoise.Line("> ")
+		line = strings.ToLower(line)
+
 		fmt.Println()
 
 		// Exit the game if the user wants to leave
-		if strings.EqualFold(line, "exit") || strings.EqualFold(line, "quit") || err == linenoise.KillSignalError {
+		if line == "exit" || line == "quit" || err == linenoise.KillSignalError {
 			return
 		}
 
