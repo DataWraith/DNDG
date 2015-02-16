@@ -38,6 +38,14 @@ func main() {
 
 	displayDescription := true
 
+	if DEBUG {
+		for k, v := range Rooms {
+			if k != v.ID {
+				log.Fatalf("ID of room %03d does not match its index, %03d", v.ID, k)
+			}
+		}
+	}
+
 gameloop:
 	for {
 		fmt.Println()
@@ -51,6 +59,7 @@ gameloop:
 
 		// Print the current Room's description
 		if displayDescription {
+			linenoise.Clear()
 			fmt.Print(Rooms[g.CurrentRoom].Description(g))
 		}
 		displayDescription = false

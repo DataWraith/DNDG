@@ -45,7 +45,8 @@ three meters in height.
 
 				return strings.TrimSpace(`
 You are standing in front of a wrought iron gate. It is fairly massive, with
-spikes on top. The gate is currently open.
+spikes on top. The gate is currently open. Next to it is a stone wall three
+meters in height.
 				`)
 			},
 
@@ -142,7 +143,7 @@ creaking noise.
 			},
 
 			Action{
-				Command: []string{"unlock gate", "unlock", "use key", "use key on gate"},
+				Command: []string{"unlock gate", "unlock", "use key", "use key on gate", "use key on lock"},
 				Func: func(g *Gamestate) bool {
 					// TODO: Check inventory for key
 					fmt.Println(strings.TrimSpace(`
